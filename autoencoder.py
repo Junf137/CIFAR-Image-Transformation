@@ -323,7 +323,7 @@ def main():
     plt.savefig("loss_curves.png")
 
     # Load best model for visualization
-    model.load_state_dict(torch.load("best_unet_model.pth"))
+    model.load_state_dict(torch.load("output/checkpoints/best_unet_model.pth"))
 
     # Visualize some results
     visualize_results(model, val_loader, device)
