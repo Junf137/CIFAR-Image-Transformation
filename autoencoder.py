@@ -230,7 +230,7 @@ def main():
     # Hyperparameters
     batch_size = 64
     learning_rate = 1e-4
-    num_epochs = 100
+    num_epochs = 200
 
     # Load data
     X_train = get_images_from_csv("data/train_dataset_input_images.csv")
