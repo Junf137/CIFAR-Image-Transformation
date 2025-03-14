@@ -4,6 +4,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
+from torchsummary import summary
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
@@ -260,6 +261,7 @@ def main():
 
     # Initialize model
     model = UNet().to(device)
+    summary(model, X_train.shape[1:])
 
     # Initialize optimizer
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
