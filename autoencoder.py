@@ -9,6 +9,9 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 
+from functions import get_images_from_csv
+
+
 # Define the double convolution block used in U-Net
 class DoubleConvBlock(nn.Module):
     def __init__(self, in_channels, out_channels):
@@ -227,30 +230,30 @@ def main():
     learning_rate = 1e-4
     num_epochs = 100
 
-    # Load dataset
-    # This is a placeholder - you need to load your actual dataset
-    # X_train = np.load('X_train.npy')  # Shape: (N, 3, 32, 32)
-    # Y_train = np.load('Y_train.npy')  # Shape: (N, 3, 32, 32)
+    # Load data
+    X_train = get_images_from_csv("data/train_dataset_input_images.csv")
+    X_train = np.stack(X_train, axis=0)
+    print(f"Shape of X_train: {X_train.shape}")
 
-    # Simulate dataset for demonstration
-    # Replace this with your actual data loading code
-    N = 1000  # Number of samples
-    X_data = np.random.rand(N, 3, 32, 32).astype(np.float32)
-    Y_data = np.random.rand(N, 3, 32, 32).astype(np.float32)
+    Y_train = get_images_from_csv("data/train_dataset_output_images.csv")
+    Y_train = np.stack(Y_train, axis=0)
+    print(f"Shape of Y_train: {Y_train.shape}")
 
     # Split into train and validation sets (80-20 split)
-    train_size = int(0.8 * len(X_data))
-    val_size = len(X_data) - train_size
+    train_size = int(0.8 * len(X_train))
 
-    X_train, X_val = X_data[:train_size], X_data[train_size:]
-    Y_train, Y_val = Y_data[:train_size], Y_data[train_size:]
+    # Randomly data split
+    indices = np.random.permutation(len(X_train))
+    train_indices, val_indices = indices[:train_size], indices[train_size:]
+    X_train, X_val = X_train[train_indices], X_train[val_indices]
+    Y_train, Y_val = Y_train[train_indices], Y_train[val_indices]
 
     print(f"Training set size: {len(X_train)}")
     print(f"Validation set size: {len(X_val)}")
 
     # Create datasets and data loaders
-    train_dataset = RotationDataset(X_train, Y_train)
-    val_dataset = RotationDataset(X_val, Y_val)
+    train_dataset = RotationDataset(torch.tensor(X_train, dtype=torch.float32), torch.tensor(Y_train, dtype=torch.float32))
+    val_dataset = RotationDataset(torch.tensor(X_val, dtype=torch.float32), torch.tensor(Y_val, dtype=torch.float32))
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=4)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
