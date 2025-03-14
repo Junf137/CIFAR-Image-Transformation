@@ -207,6 +207,7 @@ def visualize_results(model, data_loader, device, num_samples=5):
         axes[i, 2].axis("off")
 
     plt.tight_layout()
+    plt.savefig("output/predictions.png")
     plt.show()
 
 
