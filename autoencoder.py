@@ -1,3 +1,4 @@
+import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -208,8 +209,14 @@ def visualize_results(model, data_loader, device, num_samples=5):
 # Main execution function
 def main():
     # Set random seed for reproducibility
-    torch.manual_seed(42)
-    np.random.seed(42)
+    seed = 42
+    # random.seed(seed)
+    os.environ["PYTHONHASHSEED"] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    print(f"Seed: {seed}")
 
     # Set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
