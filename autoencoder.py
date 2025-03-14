@@ -297,9 +297,11 @@ def main():
         # Check if this is the best model so far
         if val_loss < best_val_loss:
             best_val_loss = val_loss
+
             # Save the model
-            torch.save(model.state_dict(), "best_unet_model.pth")
+            torch.save(model.state_dict(), "output/checkpoints/best_unet_model.pth")
             print("Model saved!")
+
             counter = 0  # Reset counter
         else:
             counter += 1
