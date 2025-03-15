@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 from model import UNet
-from functions import get_images_from_csv
+from functions import get_images_from_csv, prepare_submission
 
 
 # Custom dataset class
@@ -134,6 +134,12 @@ def visualize_results(model, data_loader, device, num_samples=5):
 
 # Main execution function
 def main():
+
+    train_input_csv = "data/train_dataset_input_images.csv"
+    train_output_csv = "data/train_dataset_output_images.csv"
+    test_input_csv = "data/test_dataset_input_images.csv"
+    output_csv = "output/submission.csv"
+
     # Set random seed for reproducibility
     seed = 42
     # random.seed(seed)
@@ -158,11 +164,11 @@ def main():
     summary(model, (3, 32, 32))
 
     # Load data
-    X_train = get_images_from_csv("data/train_dataset_input_images.csv")
+    X_train = get_images_from_csv(train_input_csv)
     X_train = np.stack(X_train, axis=0)
     print(f"Shape of X_train: {X_train.shape}")
 
-    Y_train = get_images_from_csv("data/train_dataset_output_images.csv")
+    Y_train = get_images_from_csv(train_output_csv)
     Y_train = np.stack(Y_train, axis=0)
     print(f"Shape of Y_train: {Y_train.shape}")
 
@@ -254,6 +260,9 @@ def main():
     final_grade = 100 - 1000 * final_val_loss
     print(f"Final MSE on validation set: {final_val_loss:.6f}")
     print(f"Final Grade: {final_grade:.2f}")
+
+    # submission
+    prepare_submission(test_input_csv, output_csv, model, batch_size, device)
 
     return model
 
