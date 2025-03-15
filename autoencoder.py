@@ -263,8 +263,7 @@ def main():
     # Calculate final MSE on validation set
     final_val_loss = validate(model, val_loader, device)
     final_grade = 100 - 1000 * final_val_loss
-    print(f"Final MSE on validation set: {final_val_loss:.6f}")
-    print(f"Final Grade: {final_grade:.2f}")
+    print(f"Final MSE on validation set: {final_val_loss:.6f}, Final Grade: {final_grade:.2f}")
 
     # submission
     prepare_submission(test_input_csv, output_csv, model, batch_size, device)
