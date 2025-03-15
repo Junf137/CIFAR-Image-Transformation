@@ -41,7 +41,6 @@ def prepare_submission(test_data_csv, output_csv, model, batch_size, device):
     print(f"Shape of X_test: {X_test.shape}")
 
     num_samples = X_test.shape[0]
-    ids = range(1, num_samples + 1)
 
     # Process test data in batches
     print("Generating predictions...")
@@ -56,17 +55,15 @@ def prepare_submission(test_data_csv, output_csv, model, batch_size, device):
 
     # Concatenate all batch predictions
     Y_pred = np.vstack(Y_pred)
-
-    # Reshape to (N, 3*32*32)
     Y_pred_flat = Y_pred.reshape(num_samples, -1)
     len_row = Y_pred_flat.shape[1]
 
-    # Create output dataframe
-    output_df = pd.DataFrame({"ID": ids})
+    # Create the DataFrame all at once, which is much more efficient
+    pixel_df = pd.DataFrame(Y_pred_flat, columns=[f"p{i}" for i in range(1, len_row + 1)])
+    id_df = pd.DataFrame({"ID": list(range(1, num_samples + 1))})
 
-    # Add prediction columns
-    for i in range(1, len_row + 1):
-        output_df[f"p{i}"] = Y_pred_flat[:, i - 1]
+    # Concatenate ID column with pixel data horizontally
+    output_df = pd.concat([id_df, pixel_df], axis=1)
 
     # Save to CSV
     print(f"Saving predictions to {output_csv}...")
