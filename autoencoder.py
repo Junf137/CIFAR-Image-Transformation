@@ -268,8 +268,6 @@ def main():
     # submission
     prepare_submission(test_input_csv, output_csv, model, batch_size, device)
 
-    return model
-
 
 if __name__ == "__main__":
     main()
