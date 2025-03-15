@@ -7,6 +7,7 @@ from torchsummary import summary
 import numpy as np
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+import wandb
 
 from model import UNet
 from functions import get_images_from_csv, prepare_submission
@@ -139,6 +140,7 @@ def main():
     train_output_csv = "data/train_dataset_output_images.csv"
     test_input_csv = "data/test_dataset_input_images.csv"
     output_csv = "output/submission.csv"
+    checkpoint_path = "output/checkpoints/best_unet_model.pth"
 
     # Set random seed for reproducibility
     seed = 42
@@ -149,6 +151,9 @@ def main():
     torch.cuda.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
     print(f"Seed: {seed}")
+
+    # generate wandb run wandb_id, to be used to link the run with test_upload
+    wandb_id = wandb.util.generate_id()
 
     # Set device
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -227,7 +232,7 @@ def main():
             best_val_loss = val_loss
 
             # Save the model
-            torch.save(model.state_dict(), "output/checkpoints/best_unet_model.pth")
+            torch.save(model.state_dict(), checkpoint_path)
             print("Model saved!")
 
             counter = 0  # Reset counter
@@ -250,7 +255,7 @@ def main():
     plt.savefig("loss_curves.png")
 
     # Load best model for visualization
-    model.load_state_dict(torch.load("output/checkpoints/best_unet_model.pth"))
+    model.load_state_dict(torch.load(checkpoint_path))
 
     # Visualize some results
     visualize_results(model, val_loader, device)
